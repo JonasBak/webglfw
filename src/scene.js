@@ -17,32 +17,21 @@ class Scene {
 
     this.va = new VertexArray(gl, shaders);
 
-    this.va.addVertex(new Vertex([0.0, 2.0, 0.0], [1.0, 1.0, 1.0, 1.0]));
-    this.va.addVertex(new Vertex([-1.0, 0.0, 1.0], [ 1.0, 0.0, 0.0, 1.0]));
-    this.va.addVertex(new Vertex([1.0, 0.0, 1.0], [ 0.0, 1.0, 0.0, 1.0]));
 
-    this.va.addVertex(new Vertex([0.0, 2.0, 0.0], [1.0, 1.0, 1.0, 1.0]));
-    this.va.addVertex(new Vertex([-1.0, 0.0, -1.0], [ 1.0, 0.0, 0.0, 1.0]));
-    this.va.addVertex(new Vertex([-1.0, 0.0, 1.0], [ 0.0, 1.0, 0.0, 1.0]));
+    this.va.addSphere(1, [0, 0, 0], 15, 10);
 
-    this.va.addVertex(new Vertex([0.0, 2.0, 0.0], [1.0, 1.0, 1.0, 1.0]));
-    this.va.addVertex(new Vertex([1.0, 0.0, -1.0], [ 1.0, 0.0, 0.0, 1.0]));
-    this.va.addVertex(new Vertex([-1.0, 0.0, -1.0], [ 0.0, 1.0, 0.0, 1.0]));
-
-    this.va.addVertex(new Vertex([0.0, 2.0, 0.0], [1.0, 1.0, 1.0, 1.0]));
-    this.va.addVertex(new Vertex([1.0, 0.0, 1.0], [ 1.0, 0.0, 0.0, 1.0]));
-    this.va.addVertex(new Vertex([1.0, 0.0, -1.0], [ 0.0, 1.0, 0.0, 1.0]));
-
-
+/*
+    this.va.addTriangle([0.0, 2.0, 0.0], [-1.0, 0.0, 1.0], [1.0, 0.0, 1.0], [1.0, 0.0, 0.0, 1.0]);
+    this.va.addTriangle([0.0, 2.0, 0.0], [-1.0, 0.0, -1.0], [-1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 1.0]);
+    this.va.addTriangle([0.0, 2.0, 0.0], [1.0, 0.0, -1.0], [-1.0, 0.0, -1.0], [0.0, 1.0, 0.0, 1.0]);
+    this.va.addTriangle([0.0, 2.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, -1.0], [0.0, 0.0, 1.0, 1.0]);
     this.va.addVertex(new Vertex([1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 1.0]));
     this.va.addVertex(new Vertex([-1.0, 0.0, 1.0], [ 1.0, 0.0, 0.0, 1.0]));
     this.va.addVertex(new Vertex([-1.0, 0.0, -1.0], [ 0.0, 1.0, 0.0, 1.0]));
-
-
     this.va.addVertex(new Vertex([1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 1.0]));
     this.va.addVertex(new Vertex([1.0, 0.0, -1.0], [ 1.0, 0.0, 0.0, 1.0]));
     this.va.addVertex(new Vertex([-1.0, 0.0, -1.0], [ 0.0, 1.0, 0.0, 1.0]));
-
+*/
 
     this.va.bufferData(gl);
   }
