@@ -26,7 +26,11 @@ class Shader {
   }
   init(gl) {
     const vertexShader = this.loadShader(gl, gl.VERTEX_SHADER, this.vsSource);
-    const fragmentShader = this.loadShader(gl, gl.FRAGMENT_SHADER, this.fsSource);
+    const fragmentShader = this.loadShader(
+      gl,
+      gl.FRAGMENT_SHADER,
+      this.fsSource
+    );
 
     const shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, vertexShader);
@@ -38,19 +42,29 @@ class Shader {
     this.programInfo = {
       program: shaderProgram,
       attribLocations: {
-        vertexPosition: gl.getAttribLocation(this.shaderProgram, 'aVertexPosition'),
-        vertexColor: gl.getAttribLocation(this.shaderProgram, 'aVertexColor'),
+        vertexPosition: gl.getAttribLocation(
+          this.shaderProgram,
+          "aVertexPosition"
+        ),
+        vertexColor: gl.getAttribLocation(this.shaderProgram, "aVertexColor")
       },
       uniformLocations: {
-        projectionMatrix: gl.getUniformLocation(this.shaderProgram, 'uProjectionMatrix'),
-        modelViewMatrix: gl.getUniformLocation(this.shaderProgram, 'uModelViewMatrix'),
-      },
+        projectionMatrix: gl.getUniformLocation(
+          this.shaderProgram,
+          "uProjectionMatrix"
+        ),
+        modelViewMatrix: gl.getUniformLocation(
+          this.shaderProgram,
+          "uModelViewMatrix"
+        )
+      }
     };
   }
+
   loadShader(gl, type, source) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-    return shader
+    return shader;
   }
-};
+}

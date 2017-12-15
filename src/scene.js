@@ -6,7 +6,6 @@ class Scene {
     this.zFar = 100.0;
     this.projectionMatrix = mat4.create();
 
-
     this.cameraRotation = 0;
     this.cameraTranslation = [-0.0, 0.0, -6.0];
     this.cameraRotAxis = [0, 0, 1];
@@ -14,13 +13,11 @@ class Scene {
 
     this.clearColor = [0.9, 0.9, 0.9, 1.0];
 
-
     this.va = new VertexArray(gl, shaders);
-
 
     this.va.addSphere(1, [0, 0, 0], 15, 10);
 
-/*
+    /*
     this.va.addTriangle([0.0, 2.0, 0.0], [-1.0, 0.0, 1.0], [1.0, 0.0, 1.0], [1.0, 0.0, 0.0, 1.0]);
     this.va.addTriangle([0.0, 2.0, 0.0], [-1.0, 0.0, -1.0], [-1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 1.0]);
     this.va.addTriangle([0.0, 2.0, 0.0], [1.0, 0.0, -1.0], [-1.0, 0.0, -1.0], [0.0, 1.0, 0.0, 1.0]);
@@ -37,20 +34,26 @@ class Scene {
   }
 
   updateMatrix() {
-    mat4.perspective(this.projectionMatrix,
-                     this.fov,
-                     this.aspect,
-                     this.zNear,
-                     this.zFar);
+    mat4.perspective(
+      this.projectionMatrix,
+      this.fov,
+      this.aspect,
+      this.zNear,
+      this.zFar
+    );
 
-     this.cameraViewMatrix = mat4.create();
-     mat4.translate(this.cameraViewMatrix,
-                    this.cameraViewMatrix,
-                    this.cameraTranslation);
-     mat4.rotate(this.cameraViewMatrix,
-                 this.cameraViewMatrix,
-                 this.cameraRotation,
-                 this.cameraRotAxis);
+    this.cameraViewMatrix = mat4.create();
+    mat4.translate(
+      this.cameraViewMatrix,
+      this.cameraViewMatrix,
+      this.cameraTranslation
+    );
+    mat4.rotate(
+      this.cameraViewMatrix,
+      this.cameraViewMatrix,
+      this.cameraRotation,
+      this.cameraRotAxis
+    );
   }
 
   draw(gl, shaders) {
@@ -66,12 +69,11 @@ class Scene {
     gl.useProgram(shaders.programInfo.program);
 
     gl.uniformMatrix4fv(
-        shaders.programInfo.uniformLocations.projectionMatrix,
-        false,
-        this.projectionMatrix);
+      shaders.programInfo.uniformLocations.projectionMatrix,
+      false,
+      this.projectionMatrix
+    );
 
     this.va.draw(gl, shaders, this.cameraViewMatrix);
-
-
   }
-};
+}
