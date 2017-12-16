@@ -7,17 +7,18 @@ class Scene {
     this.projectionMatrix = mat4.create();
 
     this.cameraRotation = 0;
-    this.cameraTranslation = [-0.0, 0.0, -6.0];
-    this.cameraRotAxis = [0, 0, 1];
+    this.cameraTranslation = vec3.fromValues(-0.0, 0.0, -6.0);
+    this.cameraRotAxis = vec4.fromValues(0, 0, 1);
     this.cameraViewMatrix = mat4.create();
+    this.cameraRotationMatrix = mat4.create();
 
-    this.clearColor = [0.9, 0.9, 0.9, 1.0];
+    this.clearColor = vec4.fromValues(0.9, 0.9, 0.9, 1.0);
 
     gl.enable(gl.CULL_FACE);
 
     this.va = new VertexArray(gl, shaders);
 
-    this.va.addSphere(1, [0, 0, 0], 15, 10);
+    this.va.addSphere(1);
     //this.va.addBox([-0.5, -0.5, -0.5], [1, 1, 1]);
 
     /*this.va.addQuadrilateral(
@@ -40,8 +41,6 @@ class Scene {
     this.va.addVertex(new Vertex([1.0, 0.0, -1.0], [ 1.0, 0.0, 0.0, 1.0]));
     this.va.addVertex(new Vertex([-1.0, 0.0, -1.0], [ 0.0, 1.0, 0.0, 1.0]));
 */
-
-    this.va.bufferData(gl);
   }
 
   updateMatrix() {
@@ -65,6 +64,13 @@ class Scene {
       this.cameraRotation,
       this.cameraRotAxis
     );
+    this.cameraRotationMatrix = mat4.create();
+    mat4.rotate(
+      this.cameraRotationMatrix,
+      this.cameraRotationMatrix,
+      this.cameraRotation,
+      this.cameraRotAxis
+    );
   }
 
   draw(gl, shaders) {
@@ -85,6 +91,6 @@ class Scene {
       this.projectionMatrix
     );
 
-    this.va.draw(gl, shaders, this.cameraViewMatrix);
+    this.va.draw(gl, shaders, this.cameraViewMatrix, this.cameraRotationMatrix);
   }
 }

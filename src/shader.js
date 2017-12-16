@@ -1,6 +1,6 @@
 class Shader {
   constructor() {
-    this.vsSource = `
+    this.vertexShaderDef = `
       attribute vec4 aVertexPosition;
       attribute vec4 aVertexColor;
 
@@ -14,7 +14,7 @@ class Shader {
         vColor = aVertexColor;
       }
     `;
-    this.fsSource = `
+    this.fragmentShaderDef = `
       varying lowp vec4 vColor;
 
       void main(void) {
@@ -24,12 +24,17 @@ class Shader {
     this.shaderProgram = null;
     this.programInfo = null;
   }
-  init(gl) {
-    const vertexShader = this.loadShader(gl, gl.VERTEX_SHADER, this.vsSource);
+
+  init(gl, useDefault = true) {
+    const vertexShader = this.loadShader(
+      gl,
+      gl.VERTEX_SHADER,
+      useDefault ? this.vertexShaderDef : this.vertexShaderLight
+    );
     const fragmentShader = this.loadShader(
       gl,
       gl.FRAGMENT_SHADER,
-      this.fsSource
+      useDefault ? this.fragmentShaderDef : this.fragmentShaderLight
     );
 
     const shaderProgram = gl.createProgram();

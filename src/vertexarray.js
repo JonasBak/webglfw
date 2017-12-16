@@ -13,11 +13,13 @@ class VertexArray {
   constructor(gl, shaders) {
     this.vbo = gl.createBuffer();
     this.vertexArray = [];
+    this.needBuffer = true;
 
     this.rotation = 0;
-    this.translation = [-0.0, -0.0, -0.0];
-    this.rotAxis = [0.5, 1, 0];
+    this.translation = vec3.create();
+    this.rotAxis = vec3.fromValues(0.5, 1, 0);
     this.modelViewMatrix = mat4.create();
+    this.modelRotationMatrix = mat4.create();
 
     this.attrib(gl, shaders);
   }
@@ -50,14 +52,21 @@ class VertexArray {
 
   updateMatrix() {
     this.modelViewMatrix = mat4.create();
+    mat4.rotate(
+      this.modelViewMatrix,
+      this.modelViewMatrix,
+      this.rotation,
+      this.rotAxis
+    );
     mat4.translate(
       this.modelViewMatrix,
       this.modelViewMatrix,
       this.translation
     );
+    this.modelRotationMatrix = mat4.create();
     mat4.rotate(
-      this.modelViewMatrix,
-      this.modelViewMatrix,
+      this.modelRotationMatrix,
+      this.modelRotationMatrix,
       this.rotation,
       this.rotAxis
     );
@@ -70,21 +79,22 @@ class VertexArray {
   makeVertex(position, color) {
     if (position.length != NUMPOS || color.length != NUMCOL)
       throw "illegal argument";
+    this.needBuffer = true;
     this.vertexArray.push(...position, ...color);
   }
 
-  addTriangle(p0, p1, p2, color = [1.0, 0.0, 1.0, 1.0]) {
+  addTriangle(p0, p1, p2, color = vec4.fromValues(1, 0, 1, 1)) {
     this.makeVertex(p0, color);
     this.makeVertex(p1, color);
     this.makeVertex(p2, color);
   }
 
-  addQuadrilateral(p0, p1, p2, p3, color = [1.0, 0.0, 1.0, 1.0]) {
+  addQuadrilateral(p0, p1, p2, p3, color = vec4.fromValues(1, 0, 1, 1)) {
     this.addTriangle(p0, p1, p2, color);
     this.addTriangle(p2, p3, p0, color);
   }
 
-  addBox(p000, span, color = [1.0, 0.0, 1.0, 1.0]) {
+  addBox(p000, span, color = vec4.fromValues(1, 0, 1, 1)) {
     const x0 = p000[0];
     const x1 = p000[0] + span[0];
     const y0 = p000[1];
@@ -111,7 +121,7 @@ class VertexArray {
     this.addQuadrilateral(p011, p111, p110, p010, color);
   }
 
-  addSphere(radius, center = [0, 0, 0], cir = 10, hei = 10) {
+  addSphere(radius, center = vec3.create(), cir = 10, hei = 10) {
     //TODO: mer effektiv
     //TODO: legg til tilfelle hvor man er på toppen/bunner for å spare 2 * cir trekanter
     for (let h = 0; h < hei; h++) {
@@ -139,24 +149,50 @@ class VertexArray {
           r1 * Math.sin(2 * Math.PI * (c + 1) / cir)
         ];
 
-        const p0 = [center[0] + x00, center[1] + y0, center[2] + z00];
-        const p1 = [center[0] + x01, center[1] + y0, center[2] + z01];
-        const p2 = [center[0] + x11, center[1] + y1, center[2] + z11];
-        const p3 = [center[0] + x10, center[1] + y1, center[2] + z10];
+        const p0 = vec3.fromValues(
+          center[0] + x00,
+          center[1] + y0,
+          center[2] + z00
+        );
+        const p1 = vec3.fromValues(
+          center[0] + x01,
+          center[1] + y0,
+          center[2] + z01
+        );
+        const p2 = vec3.fromValues(
+          center[0] + x11,
+          center[1] + y1,
+          center[2] + z11
+        );
+        const p3 = vec3.fromValues(
+          center[0] + x10,
+          center[1] + y1,
+          center[2] + z10
+        );
 
-        this.addQuadrilateral(p0, p1, p2, p3, [c / cir, h / hei, 0, 1]);
-        //this.addTriangle(p0, p1, p2, [1, c / cir, 0, 1]);
-        //this.addTriangle(p2, p3, p1, [1, h / hei, 0, 1]);
+        this.addQuadrilateral(
+          p0,
+          p1,
+          p2,
+          p3,
+          vec4.fromValues(c / cir, h / hei, 0, 1)
+        );
       }
     }
   }
 
-  draw(gl, shaders, camera) {
-    this.bufferData(gl);
+  draw(gl, shaders, cameraViewMatrix, cameraRotationMatrix) {
+    if (this.needBuffer) this.bufferData(gl);
 
     this.updateMatrix();
 
-    mat4.multiply(this.modelViewMatrix, camera, this.modelViewMatrix);
+    mat4.multiply(this.modelViewMatrix, cameraViewMatrix, this.modelViewMatrix);
+
+    mat4.multiply(
+      this.modelRotationMatrix,
+      cameraRotationMatrix,
+      this.modelRotationMatrix
+    );
 
     gl.uniformMatrix4fv(
       shaders.programInfo.uniformLocations.modelViewMatrix,
@@ -172,11 +208,16 @@ class VertexArray {
   }
 
   bufferData(gl) {
+    console.log(
+      "Buffering vertex array of size: ",
+      this.vertexArray.length / (NUMPOS + NUMCOL)
+    );
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array(this.vertexArray),
       gl.STATIC_DRAW
     );
+    this.needBuffer = false;
   }
 }
