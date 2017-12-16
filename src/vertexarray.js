@@ -1,12 +1,17 @@
-const FLOATSIZE = 4;
-const NUMPOS = 3;
-const NUMCOL = 4;
+const vertexStruct = {
+  props: {
+    vertexPosition: vec3.create(),
+    vertexColor: vec4.create()
+  },
+  types: {},
+  normalize: {},
+  numComp: 0,
+  size: 0
+};
 
-class Vertex {
-  constructor(position, color) {
-    this.position = position;
-    this.color = color;
-  }
+for (let key in vertexStruct.props) {
+  vertexStruct.numComp += vertexStruct.props[key].length;
+  vertexStruct.size += vertexStruct.props[key].byteLength;
 }
 
 class VertexArray {
@@ -25,29 +30,23 @@ class VertexArray {
   }
   attrib(gl, shaders) {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
-    //Pos
-    gl.vertexAttribPointer(
-      shaders.programInfo.attribLocations.vertexPosition,
-      NUMPOS,
-      gl.FLOAT,
-      false,
-      (NUMPOS + NUMCOL) * FLOATSIZE,
-      0
-    );
-    gl.enableVertexAttribArray(
-      shaders.programInfo.attribLocations.vertexPosition
-    );
 
-    //Col
-    gl.vertexAttribPointer(
-      shaders.programInfo.attribLocations.vertexColor,
-      NUMCOL,
-      gl.FLOAT,
-      false,
-      (NUMPOS + NUMCOL) * FLOATSIZE,
-      NUMPOS * FLOATSIZE
-    );
-    gl.enableVertexAttribArray(shaders.programInfo.attribLocations.vertexColor);
+    let offset = 0;
+    for (let key in vertexStruct.props) {
+      console.log(key, shaders.programInfo.attribLocations[key]);
+
+      gl.vertexAttribPointer(
+        shaders.programInfo.attribLocations[key],
+        vertexStruct.props[key].length,
+        vertexStruct.types[key] || gl.FLOAT,
+        vertexStruct.normalize[key] || false,
+        vertexStruct.size,
+        offset
+      );
+      gl.enableVertexAttribArray(shaders.programInfo.attribLocations[key]);
+
+      offset += vertexStruct.props[key].byteLength;
+    }
   }
 
   updateMatrix() {
@@ -77,7 +76,10 @@ class VertexArray {
   }
 
   makeVertex(position, color) {
-    if (position.length != NUMPOS || color.length != NUMCOL)
+    if (
+      position.length != vertexStruct.props.vertexPosition.length ||
+      color.length != vertexStruct.props.vertexColor.length
+    )
       throw "illegal argument";
     this.needBuffer = true;
     this.vertexArray.push(...position, ...color);
@@ -201,7 +203,7 @@ class VertexArray {
     );
 
     const offset = 0;
-    const vertexCount = this.vertexArray.length / (NUMPOS + NUMCOL);
+    const vertexCount = this.vertexArray.length / vertexStruct.numComp;
     gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
 
     this.rotation += 0.01;
@@ -210,7 +212,7 @@ class VertexArray {
   bufferData(gl) {
     console.log(
       "Buffering vertex array of size: ",
-      this.vertexArray.length / (NUMPOS + NUMCOL)
+      this.vertexArray.length / vertexStruct.numComp
     );
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
     gl.bufferData(
