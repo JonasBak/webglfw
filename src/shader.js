@@ -1,8 +1,9 @@
 class Shader {
   constructor() {
     this.vertexShaderDef = `
-      attribute vec4 aVertexPosition;
+      attribute vec3 aVertexPosition;
       attribute vec4 aVertexColor;
+      attribute vec3 aVertexNormal;
 
       uniform mat4 uModelViewMatrix;
       uniform mat4 uProjectionMatrix;
@@ -10,8 +11,8 @@ class Shader {
       varying lowp vec4 vColor;
 
       void main(void) {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-        vColor = aVertexColor;
+        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1);
+        vColor = aVertexColor + vec4((0.5 * aVertexNormal + vec3(0.5)), 1);
       }
     `;
     this.fragmentShaderDef = `
@@ -51,7 +52,8 @@ class Shader {
           this.shaderProgram,
           "aVertexPosition"
         ),
-        vertexColor: gl.getAttribLocation(this.shaderProgram, "aVertexColor")
+        vertexColor: gl.getAttribLocation(this.shaderProgram, "aVertexColor"),
+        vertexNormal: gl.getAttribLocation(this.shaderProgram, "aVertexNormal")
       },
       uniformLocations: {
         projectionMatrix: gl.getUniformLocation(

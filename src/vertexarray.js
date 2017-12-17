@@ -1,7 +1,8 @@
 const vertexStruct = {
   props: {
     vertexPosition: vec3.create(),
-    vertexColor: vec4.create()
+    vertexColor: vec4.create(),
+    vertexNormal: vec3.create()
   },
   types: {},
   normalize: {},
@@ -72,23 +73,30 @@ class VertexArray {
   }
 
   addVertex(vertex) {
-    this.makeVertex(vertex.position, vertex.color);
+    this.makeVertex(vertex.position, vertex.normal, vertex.color);
   }
 
-  makeVertex(position, color) {
+  makeVertex(position, color, normal) {
     if (
       position.length != vertexStruct.props.vertexPosition.length ||
-      color.length != vertexStruct.props.vertexColor.length
+      color.length != vertexStruct.props.vertexColor.length ||
+      normal.length != vertexStruct.props.vertexNormal.length
     )
       throw "illegal argument";
     this.needBuffer = true;
-    this.vertexArray.push(...position, ...color);
+    this.vertexArray.push(...position, ...color, ...normal);
   }
 
   addTriangle(p0, p1, p2, color = vec4.fromValues(1, 0, 1, 1)) {
-    this.makeVertex(p0, color);
-    this.makeVertex(p1, color);
-    this.makeVertex(p2, color);
+    const normal = vec3.cross(
+      vec3.create(),
+      vec3.sub(vec3.create(), p1, p0),
+      vec3.sub(vec3.create(), p2, p0)
+    );
+    vec3.normalize(normal, normal);
+    this.makeVertex(p0, color, normal);
+    this.makeVertex(p1, color, normal);
+    this.makeVertex(p2, color, normal);
   }
 
   addQuadrilateral(p0, p1, p2, p3, color = vec4.fromValues(1, 0, 1, 1)) {
@@ -177,7 +185,7 @@ class VertexArray {
           p1,
           p2,
           p3,
-          vec4.fromValues(c / cir, h / hei, 0, 1)
+          vec4.create() //fromValues(c / cir, h / hei, 0, 1)
         );
       }
     }
