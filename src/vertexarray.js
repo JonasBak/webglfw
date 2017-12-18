@@ -84,16 +84,18 @@ class VertexArray {
     )
       throw "illegal argument";
     this.needBuffer = true;
+    vec3.normalize(normal, normal);
     this.vertexArray.push(...position, ...color, ...normal);
   }
 
-  addTriangle(p0, p1, p2, color = vec4.fromValues(1, 0, 1, 1)) {
-    const normal = vec3.cross(
-      vec3.create(),
-      vec3.sub(vec3.create(), p1, p0),
-      vec3.sub(vec3.create(), p2, p0)
-    );
-    vec3.normalize(normal, normal);
+  addTriangle(p0, p1, p2, color = vec4.fromValues(1, 0, 1, 1), normal = null) {
+    normal =
+      normal ||
+      vec3.cross(
+        vec3.create(),
+        vec3.sub(vec3.create(), p1, p0),
+        vec3.sub(vec3.create(), p2, p0)
+      );
     this.makeVertex(p0, color, normal);
     this.makeVertex(p1, color, normal);
     this.makeVertex(p2, color, normal);
@@ -112,14 +114,14 @@ class VertexArray {
     const z0 = p000[2];
     const z1 = p000[2] + span[2];
 
-    const p001 = [x0, y0, z1];
-    const p010 = [x0, y1, z0];
-    const p011 = [x0, y1, z1];
+    const p001 = vec3.fromValues(x0, y0, z1);
+    const p010 = vec3.fromValues(x0, y1, z0);
+    const p011 = vec3.fromValues(x0, y1, z1);
 
-    const p100 = [x1, y0, z0];
-    const p101 = [x1, y0, z1];
-    const p110 = [x1, y1, z0];
-    const p111 = [x1, y1, z1];
+    const p100 = vec3.fromValues(x1, y0, z0);
+    const p101 = vec3.fromValues(x1, y0, z1);
+    const p110 = vec3.fromValues(x1, y1, z0);
+    const p111 = vec3.fromValues(x1, y1, z1);
 
     this.addQuadrilateral(p000, p001, p011, p010, color);
     this.addQuadrilateral(p110, p111, p101, p100, color);
@@ -131,7 +133,7 @@ class VertexArray {
     this.addQuadrilateral(p011, p111, p110, p010, color);
   }
 
-  addSphere(radius, center = vec3.create(), cir = 10, hei = 10) {
+  addSphere(radius, center = vec3.create(), cir = 10, hei = 5) {
     //TODO: mer effektiv
     //TODO: legg til tilfelle hvor man er på toppen/bunner for å spare 2 * cir trekanter
     for (let h = 0; h < hei; h++) {
@@ -180,13 +182,26 @@ class VertexArray {
           center[2] + z10
         );
 
-        this.addQuadrilateral(
+        const color = vec4.create();
+
+        this.makeVertex(p0, color, vec3.sub(vec3.create(), p0, center));
+        this.makeVertex(p1, color, vec3.sub(vec3.create(), p1, center));
+        this.makeVertex(p2, color, vec3.sub(vec3.create(), p2, center));
+
+        this.makeVertex(p2, color, vec3.sub(vec3.create(), p2, center));
+        this.makeVertex(p3, color, vec3.sub(vec3.create(), p3, center));
+        this.makeVertex(p0, color, vec3.sub(vec3.create(), p0, center));
+
+        //this.addTriangle(p0, p1, p2, color);
+        //this.addTriangle(p2, p3, p0, color);
+
+        /*this.addQuadrilateral(
           p0,
           p1,
           p2,
           p3,
           vec4.create() //fromValues(c / cir, h / hei, 0, 1)
-        );
+        );*/
       }
     }
   }

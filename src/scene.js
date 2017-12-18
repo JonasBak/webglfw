@@ -18,8 +18,8 @@ class Scene {
 
     this.va = new VertexArray(gl, shaders);
 
-    this.va.addSphere(1);
-    //this.va.addBox([-0.5, -0.5, -0.5], [1, 1, 1]);
+    //this.va.addSphere(1);
+    this.va.addBox([-0.5, -0.5, -0.5], [1, 1, 1], [0, 0, 0, 1]);
 
     /*this.va.addQuadrilateral(
       [0, 0, 0],
