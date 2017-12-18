@@ -18,29 +18,9 @@ class Scene {
 
     this.va = new VertexArray(gl, shaders);
 
+    //testing
     //this.va.addSphere(1);
-    this.va.addBox([-0.5, -0.5, -0.5], [1, 1, 1], [0, 0, 0, 1]);
-
-    /*this.va.addQuadrilateral(
-      [0, 0, 0],
-      [1, 0, 0],
-      [1, 1, 0],
-      [0, 1, 0],
-      [0, 0, 1, 1]
-    );*/
-
-    /*
-    this.va.addTriangle([0.0, 2.0, 0.0], [-1.0, 0.0, 1.0], [1.0, 0.0, 1.0], [1.0, 0.0, 0.0, 1.0]);
-    this.va.addTriangle([0.0, 2.0, 0.0], [-1.0, 0.0, -1.0], [-1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 1.0]);
-    this.va.addTriangle([0.0, 2.0, 0.0], [1.0, 0.0, -1.0], [-1.0, 0.0, -1.0], [0.0, 1.0, 0.0, 1.0]);
-    this.va.addTriangle([0.0, 2.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, -1.0], [0.0, 0.0, 1.0, 1.0]);
-    this.va.addVertex(new Vertex([1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 1.0]));
-    this.va.addVertex(new Vertex([-1.0, 0.0, 1.0], [ 1.0, 0.0, 0.0, 1.0]));
-    this.va.addVertex(new Vertex([-1.0, 0.0, -1.0], [ 0.0, 1.0, 0.0, 1.0]));
-    this.va.addVertex(new Vertex([1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 1.0]));
-    this.va.addVertex(new Vertex([1.0, 0.0, -1.0], [ 1.0, 0.0, 0.0, 1.0]));
-    this.va.addVertex(new Vertex([-1.0, 0.0, -1.0], [ 0.0, 1.0, 0.0, 1.0]));
-*/
+    this.va.addBox([-0.5, -0.5, -0.5], [1, 1, 1], [0.1, 0.3, 1, 1]);
   }
 
   updateMatrix() {
@@ -91,6 +71,6 @@ class Scene {
       this.projectionMatrix
     );
 
-    this.va.draw(gl, shaders, this.cameraViewMatrix, this.cameraRotationMatrix);
+    this.va.draw(gl, shaders, this.cameraViewMatrix);
   }
 }

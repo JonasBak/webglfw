@@ -22,12 +22,20 @@ class VertexArray {
     this.needBuffer = true;
 
     this.rotation = 0;
-    this.translation = vec3.create();
+    this.translation = vec3.fromValues(0, 0, 0);
     this.rotAxis = vec3.fromValues(0.5, 1, 0);
     this.modelViewMatrix = mat4.create();
     this.modelRotationMatrix = mat4.create();
 
     this.attrib(gl, shaders);
+
+    this.light = new DirectionalLight(
+      vec3.fromValues(-0.1, -1, 0),
+      vec3.fromValues(1, 1, 1),
+      1,
+      0,
+      0.1
+    );
   }
   attrib(gl, shaders) {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
@@ -63,7 +71,7 @@ class VertexArray {
       this.modelViewMatrix,
       this.translation
     );
-    this.modelRotationMatrix = mat4.create();
+    this.modelRotationMatrix = mat4.identity(mat4.create());
     mat4.rotate(
       this.modelRotationMatrix,
       this.modelRotationMatrix,
@@ -133,7 +141,7 @@ class VertexArray {
     this.addQuadrilateral(p011, p111, p110, p010, color);
   }
 
-  addSphere(radius, center = vec3.create(), cir = 10, hei = 5) {
+  addSphere(radius, center = vec3.create(), cir = 20, hei = 10) {
     //TODO: mer effektiv
     //TODO: legg til tilfelle hvor man er på toppen/bunner for å spare 2 * cir trekanter
     for (let h = 0; h < hei; h++) {
@@ -182,7 +190,7 @@ class VertexArray {
           center[2] + z10
         );
 
-        const color = vec4.create();
+        const color = vec4.fromValues(1, 0.3, 0.2, 1);
 
         this.makeVertex(p0, color, vec3.sub(vec3.create(), p0, center));
         this.makeVertex(p1, color, vec3.sub(vec3.create(), p1, center));
@@ -191,33 +199,16 @@ class VertexArray {
         this.makeVertex(p2, color, vec3.sub(vec3.create(), p2, center));
         this.makeVertex(p3, color, vec3.sub(vec3.create(), p3, center));
         this.makeVertex(p0, color, vec3.sub(vec3.create(), p0, center));
-
-        //this.addTriangle(p0, p1, p2, color);
-        //this.addTriangle(p2, p3, p0, color);
-
-        /*this.addQuadrilateral(
-          p0,
-          p1,
-          p2,
-          p3,
-          vec4.create() //fromValues(c / cir, h / hei, 0, 1)
-        );*/
       }
     }
   }
 
-  draw(gl, shaders, cameraViewMatrix, cameraRotationMatrix) {
+  draw(gl, shaders, cameraViewMatrix) {
     if (this.needBuffer) this.bufferData(gl);
 
     this.updateMatrix();
 
     mat4.multiply(this.modelViewMatrix, cameraViewMatrix, this.modelViewMatrix);
-
-    mat4.multiply(
-      this.modelRotationMatrix,
-      cameraRotationMatrix,
-      this.modelRotationMatrix
-    );
 
     gl.uniformMatrix4fv(
       shaders.programInfo.uniformLocations.modelViewMatrix,
@@ -225,11 +216,24 @@ class VertexArray {
       this.modelViewMatrix
     );
 
+    gl.uniformMatrix4fv(
+      shaders.programInfo.uniformLocations.modelRotationMatrix,
+      false,
+      this.modelRotationMatrix
+    );
+
+    this.light.set(gl, shaders);
+
     const offset = 0;
     const vertexCount = this.vertexArray.length / vertexStruct.numComp;
     gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
 
+    //testing
     this.rotation += 0.01;
+
+    const t = Date.now() / 1000;
+
+    vec3.set(this.light.direction, Math.cos(t), -1, Math.sin(t));
   }
 
   bufferData(gl) {
