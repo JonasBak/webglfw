@@ -1,6 +1,6 @@
 class Shader {
   constructor() {
-    this.vertexShaderDef = `
+    this.vertexShader = `
       attribute vec3 aVertexPosition;
       attribute vec4 aVertexColor;
       attribute vec3 aVertexNormal;
@@ -15,7 +15,7 @@ class Shader {
         vColor = aVertexColor + vec4((0.5 * aVertexNormal + vec3(0.5)), 1);
       }
     `;
-    this.fragmentShaderDef = `
+    this.fragmentShader = `
       varying lowp vec4 vColor;
 
       void main(void) {
@@ -26,16 +26,16 @@ class Shader {
     this.programInfo = null;
   }
 
-  init(gl, useDefault = true) {
+  init(gl) {
     const vertexShader = this.loadShader(
       gl,
       gl.VERTEX_SHADER,
-      useDefault ? this.vertexShaderDef : this.vertexShaderLight
+      this.vertexShader
     );
     const fragmentShader = this.loadShader(
       gl,
       gl.FRAGMENT_SHADER,
-      useDefault ? this.fragmentShaderDef : this.fragmentShaderLight
+      this.fragmentShader
     );
 
     const shaderProgram = gl.createProgram();
@@ -47,25 +47,28 @@ class Shader {
 
     this.programInfo = {
       program: shaderProgram,
-      attribLocations: {
-        vertexPosition: gl.getAttribLocation(
-          this.shaderProgram,
-          "aVertexPosition"
-        ),
-        vertexColor: gl.getAttribLocation(this.shaderProgram, "aVertexColor"),
-        vertexNormal: gl.getAttribLocation(this.shaderProgram, "aVertexNormal")
-      },
-      uniformLocations: {
-        projectionMatrix: gl.getUniformLocation(
-          this.shaderProgram,
-          "uProjectionMatrix"
-        ),
-        modelViewMatrix: gl.getUniformLocation(
-          this.shaderProgram,
-          "uModelViewMatrix"
-        )
-      }
+      attribLocations: {},
+      uniformLocations: {}
     };
+
+    const attribs = ["vertexPosition", "vertexColor", "vertexNormal"];
+    const uniforms = ["projectionMatrix", "modelViewMatrix"];
+
+    attribs.map(
+      a =>
+        (this.programInfo.attribLocations[a] = gl.getAttribLocation(
+          this.shaderProgram,
+          "a" + a[0].toUpperCase() + a.substr(1)
+        ))
+    );
+
+    uniforms.map(
+      a =>
+        (this.programInfo.uniformLocations[a] = gl.getUniformLocation(
+          this.shaderProgram,
+          "u" + a[0].toUpperCase() + a.substr(1)
+        ))
+    );
   }
 
   loadShader(gl, type, source) {
