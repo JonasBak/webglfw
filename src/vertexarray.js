@@ -33,8 +33,8 @@ class VertexArray {
       vec3.fromValues(-0.1, -1, 0),
       vec3.fromValues(1, 1, 1),
       1,
-      0,
-      0.1
+      0.8,
+      0.4
     );
   }
   attrib(gl, shaders) {
@@ -190,7 +190,7 @@ class VertexArray {
           center[2] + z10
         );
 
-        const color = vec4.fromValues(1, 0.3, 0.2, 1);
+        const color = vec4.fromValues(h / hei, c / cir, 0.8, 1);
 
         this.makeVertex(p0, color, vec3.sub(vec3.create(), p0, center));
         this.makeVertex(p1, color, vec3.sub(vec3.create(), p1, center));
@@ -229,7 +229,7 @@ class VertexArray {
     gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
 
     //testing
-    this.rotation += 0.01;
+    //this.rotation += 0.01;
 
     const t = Date.now() / 1000;
 

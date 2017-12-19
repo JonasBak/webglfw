@@ -5,6 +5,7 @@ class DirectionalLight {
     this.strengths = vec3.fromValues(diffuse, specular, ambient);
   }
   set(gl, shaders) {
+    vec3.normalize(this.direction, this.direction);
     gl.uniform3fv(shaders.programInfo.uniformLocations.lightColor, this.color);
     gl.uniform3fv(
       shaders.programInfo.uniformLocations.strengths,
