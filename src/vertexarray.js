@@ -1,7 +1,7 @@
 const vertexStruct = {
   props: {
     vertexPosition: vec3.create(),
-    vertexColor: vec4.create(),
+    vertexColor: vec3.create(),
     vertexNormal: vec3.create()
   },
   types: {},
@@ -96,7 +96,7 @@ class VertexArray {
     this.vertexArray.push(...position, ...color, ...normal);
   }
 
-  addTriangle(p0, p1, p2, color = vec4.fromValues(1, 0, 1, 1), normal = null) {
+  addTriangle(p0, p1, p2, color = vec3.fromValues(1, 0, 1), normal = null) {
     normal =
       normal ||
       vec3.cross(
@@ -109,12 +109,12 @@ class VertexArray {
     this.makeVertex(p2, color, normal);
   }
 
-  addQuadrilateral(p0, p1, p2, p3, color = vec4.fromValues(1, 0, 1, 1)) {
+  addQuadrilateral(p0, p1, p2, p3, color = vec.fromValues(1, 0, 1)) {
     this.addTriangle(p0, p1, p2, color);
     this.addTriangle(p2, p3, p0, color);
   }
 
-  addBox(p000, span, color = vec4.fromValues(1, 0, 1, 1)) {
+  addBox(p000, span, color = vec3.fromValues(1, 0, 1)) {
     const x0 = p000[0];
     const x1 = p000[0] + span[0];
     const y0 = p000[1];
@@ -190,7 +190,7 @@ class VertexArray {
           center[2] + z10
         );
 
-        const color = vec4.fromValues(h / hei, c / cir, 0.8, 1);
+        const color = vec3.fromValues(h / hei, c / cir, 0.8);
 
         this.makeVertex(p0, color, vec3.sub(vec3.create(), p0, center));
         this.makeVertex(p1, color, vec3.sub(vec3.create(), p1, center));

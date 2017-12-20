@@ -4,7 +4,7 @@ class Shader {
     //TODO fler lyskilder
     this.vertexShader = `
       attribute vec3 aVertexPosition;
-      attribute vec4 aVertexColor;
+      attribute vec3 aVertexColor;
       attribute vec3 aVertexNormal;
 
       uniform mat4 uModelViewMatrix;
@@ -17,7 +17,7 @@ class Shader {
       uniform vec3 uLightDir;
       uniform vec3 uStrengths;
 
-      varying lowp vec4 vColor;
+      varying lowp vec3 vColor;
       varying mediump vec3 vNormal;
       varying mediump vec3 vLightDir;
 
@@ -45,20 +45,20 @@ class Shader {
         specular(vNormal, light);
         ambient(light);
 
-        vColor = vec4(light * aVertexColor.xyz, 1);
+        vColor = light * aVertexColor;
         vLightDir = uLightDir;
 
         gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1);
       }
     `;
     this.fragmentShader = `
-      varying lowp vec4 vColor;
+      varying lowp vec3 vColor;
       varying mediump vec3 vNormal;
       varying mediump vec3 vLightDir;
 
 
       void main(void) {
-        gl_FragColor = vColor;
+        gl_FragColor = vec4(vColor, 1);
       }
     `;
     this.shaderProgram = null;
