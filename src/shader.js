@@ -10,31 +10,33 @@ class Shader {
       uniform mat4 uModelViewMatrix;
       uniform mat4 uProjectionMatrix;
       uniform mat4 uModelRotationMatrix;
-
       uniform vec3 uCameraPosition;
-
       uniform vec3 uLightColor;
       uniform vec3 uLightDir;
-      uniform vec3 uStrengths;
+      uniform float uDiffuseStrength;
+      uniform float uSpecularStrength;
+      uniform float uAmbientStrength;
 
       varying lowp vec3 vColor;
       varying mediump vec3 vNormal;
       varying mediump vec3 vLightDir;
+      varying mediump vec3 vFragmentPosition;
+      varying lowp vec3 vLight;
 
-      void diffuse(in vec3 normal, inout vec3 difLight) {
+      void diffuse(in vec3 normal, inout vec3 light) {
         float dif = max(dot(-normal, uLightDir), 0.0);
-        difLight += uStrengths.x * dif * uLightColor;
+        light += uDiffuseStrength * dif * uLightColor;
       }
 
       void specular(in vec3 normal, inout vec3 light){
         vec3 viewDir = normalize(aVertexPosition - uCameraPosition);
 	      vec3 reflectDir = reflect(uLightDir, normal);
       	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
-        light += uStrengths.y * spec * uLightColor;
+        light += uSpecularStrength * spec * uLightColor;
       }
 
       void ambient(inout vec3 light){
-        light += uStrengths.z * uLightColor;
+        light += uAmbientStrength * uLightColor;
       }
 
       void main(void) {
@@ -45,8 +47,10 @@ class Shader {
         specular(vNormal, light);
         ambient(light);
 
-        vColor = light * aVertexColor;
+        vColor = aVertexColor;
         vLightDir = uLightDir;
+        vFragmentPosition = aVertexPosition;
+        vLight = light;
 
         gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1);
       }
@@ -55,10 +59,12 @@ class Shader {
       varying lowp vec3 vColor;
       varying mediump vec3 vNormal;
       varying mediump vec3 vLightDir;
+      varying mediump vec3 vFragmentPosition;
+      varying lowp vec3 vLight;
 
 
       void main(void) {
-        gl_FragColor = vec4(vColor, 1);
+        gl_FragColor = vec4(vColor * vLight, 1);
       }
     `;
     this.shaderProgram = null;
@@ -98,7 +104,10 @@ class Shader {
       "lightDir",
       "lightColor",
       "strengths",
-      "cameraPosition"
+      "cameraPosition",
+      "diffuseStrength",
+      "specularStrength",
+      "ambientStrength"
     ];
 
     attribs.map(
