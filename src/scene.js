@@ -6,7 +6,8 @@ class Scene {
     this.va = new VertexArray(gl, shaders);
 
     //testing
-    this.va.addSphere(1);
+    //this.va.addSphere(1.5);
+    tmpFromModel(this.va, tmpModel);
     //this.va.addBox([-0.5, -0.5, -0.5], [1, 1, 1], [0.1, 0.3, 1]);
   }
 

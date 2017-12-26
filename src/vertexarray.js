@@ -109,7 +109,7 @@ class VertexArray {
     this.makeVertex(p2, color, normal);
   }
 
-  addQuadrilateral(p0, p1, p2, p3, color = vec.fromValues(1, 0, 1)) {
+  addQuadrilateral(p0, p1, p2, p3, color = vec3.fromValues(1, 0, 1)) {
     this.addTriangle(p0, p1, p2, color);
     this.addTriangle(p2, p3, p0, color);
   }
@@ -141,7 +141,7 @@ class VertexArray {
     this.addQuadrilateral(p011, p111, p110, p010, color);
   }
 
-  addSphere(radius, center = vec3.create(), cir = 30, hei = 15) {
+  addSphere(radius, center = vec3.create(), cir = 100, hei = 50) {
     //TODO: mer effektiv
     //TODO: legg til tilfelle hvor man er på toppen/bunner for å spare 2 * cir trekanter
     for (let h = 0; h < hei; h++) {
@@ -229,7 +229,7 @@ class VertexArray {
     gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
 
     //testing
-    //this.rotation += 0.01;
+    this.rotation += 0.01;
 
     const t = Date.now() / 1000;
 
