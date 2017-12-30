@@ -7,7 +7,7 @@ class Scene {
 
     //testing
     //this.va.addSphere(1.5);
-    tmpFromModel(this.va, tmpModel);
+    tmpFromModel(this.va, tmpModel, tmpMaterial);
     //this.va.addBox([-0.5, -0.5, -0.5], [1, 1, 1], [0.1, 0.3, 1]);
   }
 
