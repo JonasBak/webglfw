@@ -1,6 +1,6 @@
 class Shader {
   constructor() {
-    //TODO bestemme hva som skal være i vertex og fragment, anbefaler specular i fragment
+    //TODO bestemme hva som skal være i vertex og fragment, anbefaler specular i fragment, kanskje diffuse
     //TODO fler lyskilder
     this.vertexShader = `
       attribute vec3 aVertexPosition;
@@ -22,6 +22,8 @@ class Shader {
       varying mediump vec3 vLightDir;
       varying mediump vec3 vFragmentPosition;
       varying lowp vec3 vLight;
+
+      varying mediump vec3 position;
 
       void diffuse(in vec3 normal, inout vec3 light) {
         float dif = max(dot(-normal, uLightDir), 0.0);
@@ -62,6 +64,7 @@ class Shader {
       varying mediump vec3 vFragmentPosition;
       varying lowp vec3 vLight;
 
+      varying mediump vec3 position;
 
       void main(void) {
         gl_FragColor = vec4(vColor * vLight, 1);

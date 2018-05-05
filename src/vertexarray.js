@@ -15,9 +15,14 @@ for (let key in vertexStruct.props) {
   vertexStruct.size += vertexStruct.props[key].byteLength;
 }
 
+let inited = false;
+
 class VertexArray {
   constructor(gl, shaders) {
     this.vbo = gl.createBuffer();
+
+    console.log(this.vbo);
+
     this.vertexArray = [];
     this.needBuffer = true;
 
@@ -28,21 +33,14 @@ class VertexArray {
     this.modelRotationMatrix = mat4.create();
 
     this.attrib(gl, shaders);
-
-    this.light = new DirectionalLight(
-      vec3.fromValues(-0.1, -1, 0),
-      vec3.fromValues(1, 1, 1),
-      1,
-      0.8,
-      0.4
-    );
   }
+
   attrib(gl, shaders) {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
 
     let offset = 0;
     for (let key in vertexStruct.props) {
-      console.log(key, shaders.programInfo.attribLocations[key]);
+      //console.log(key, shaders.programInfo.attribLocations[key]);
 
       gl.vertexAttribPointer(
         shaders.programInfo.attribLocations[key],
@@ -84,6 +82,12 @@ class VertexArray {
     this.makeVertex(vertex.position, vertex.normal, vertex.color);
   }
 
+  getVertex(index) {
+    const i = index * vertexStruct.numComp;
+
+    return this.vertexArray.slice(i, i + 3);
+  }
+
   makeVertex(position, color, normal) {
     if (
       position.length != vertexStruct.props.vertexPosition.length ||
@@ -94,6 +98,16 @@ class VertexArray {
     this.needBuffer = true;
     vec3.normalize(normal, normal);
     this.vertexArray.push(...position, ...color, ...normal);
+  }
+
+  changePosition(index, position) {
+    const i = index * vertexStruct.numComp;
+
+    this.vertexArray[i] = position[i];
+    this.vertexArray[i + 1] = position[i + 1];
+    this.vertexArray[i + 2] = position[i + 2];
+
+    this.needBuffer = true;
   }
 
   addTriangle(p0, p1, p2, color = vec3.fromValues(1, 0, 1), normal = null) {
@@ -203,8 +217,15 @@ class VertexArray {
     }
   }
 
+  size() {
+    return this.vertexArray.length / vertexStruct.numComp;
+  }
+
   draw(gl, shaders, cameraViewMatrix) {
     if (this.needBuffer) this.bufferData(gl);
+    this.attrib(gl, shaders); // Fix, vet ikke om det er noe bedre måte å gjøre det på
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
 
     this.updateMatrix();
 
@@ -222,18 +243,9 @@ class VertexArray {
       this.modelRotationMatrix
     );
 
-    this.light.set(gl, shaders);
-
     const offset = 0;
     const vertexCount = this.vertexArray.length / vertexStruct.numComp;
     gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
-
-    //testing
-    this.rotation += 0.01;
-
-    const t = Date.now() / 1000;
-
-    vec3.set(this.light.direction, Math.cos(t), Math.sin(t / 2), Math.sin(t));
   }
 
   bufferData(gl) {

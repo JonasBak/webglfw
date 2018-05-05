@@ -3,7 +3,7 @@ function tmpFromModel(va, model, material) {
   //const vn = [];
   const f = [];
 
-  const tmpScale = 5;
+  const tmpScale = 4;
 
   let currentMaterial = "def";
 
