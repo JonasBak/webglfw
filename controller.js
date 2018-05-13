@@ -78,17 +78,20 @@ class Controller {
       );
 
       const up = [0, 1, 0];
-      const right = vec3.cross(vec3.create(), this.camera.direction, up);
+      const right = vec3.cross(vec3.create(), up, this.camera.direction);
 
-      this.viewMatrix = mat4.create();
-      mat4.rotate(this.viewMatrix, this.viewMatrix, diff[0] / 500, up);
-      mat4.rotate(this.viewMatrix, this.viewMatrix, diff[1] / 500, right);
-
-      vec3.transformMat4(
+      vec3.add(this.camera.direction, this.camera.direction, [
+        0,
+        diff[1] / 200,
+        0
+      ]);
+      vec3.normalize(this.camera.direction, this.camera.direction);
+      vec3.add(
         this.camera.direction,
         this.camera.direction,
-        this.viewMatrix
+        vec3.scale(right, right, diff[0] / 200)
       );
+      vec3.normalize(this.camera.direction, this.camera.direction);
     }
   }
 
