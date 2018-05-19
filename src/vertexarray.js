@@ -21,7 +21,7 @@ class VertexArray {
   constructor(gl, shaders) {
     this.vbo = gl.createBuffer();
 
-    console.log(this.vbo);
+    //console.log(this.vbo);
 
     this.vertexArray = [];
     this.needBuffer = true;
@@ -33,6 +33,8 @@ class VertexArray {
     this.modelRotationMatrix = mat4.create();
 
     this.attrib(gl, shaders);
+
+    this.drawMode = gl.TRIANGLES;
   }
 
   attrib(gl, shaders) {
@@ -245,14 +247,14 @@ class VertexArray {
 
     const offset = 0;
     const vertexCount = this.vertexArray.length / vertexStruct.numComp;
-    gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
+    gl.drawArrays(this.drawMode, offset, vertexCount);
   }
 
   bufferData(gl) {
-    console.log(
-      "Buffering vertex array of size: ",
-      this.vertexArray.length / vertexStruct.numComp
-    );
+    //console.log(
+    //  "Buffering vertex array of size: ",
+    //  this.vertexArray.length / vertexStruct.numComp
+    //);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
     gl.bufferData(
       gl.ARRAY_BUFFER,

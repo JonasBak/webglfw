@@ -1,5 +1,5 @@
 class Scene {
-  constructor(canvas, gl, shaders) {
+  constructor(canvas, gl, shaders, useController = true) {
     this.camera = new Camera(gl.canvas.clientWidth / gl.canvas.clientHeight);
     this.clearColor = vec4.fromValues(0.9, 0.9, 0.9, 1.0);
 
@@ -20,14 +20,14 @@ class Scene {
       0.4
     );
 
-    this.controller = new Controller(canvas, this.camera);
+    if (useController) this.controller = new Controller(canvas, this.camera);
   }
 
   update() {
     const now = new Date();
     const dt = this.lastUpdate === -1 ? 0 : now - this.lastUpdate;
 
-    this.controller.update();
+    if (this.controller) this.controller.update();
 
     this.onUpdate.forEach(u => u(dt));
 
