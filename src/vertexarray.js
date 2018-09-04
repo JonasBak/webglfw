@@ -105,9 +105,9 @@ class VertexArray {
   changePosition(index, position) {
     const i = index * vertexStruct.numComp;
 
-    this.vertexArray[i] = position[i];
-    this.vertexArray[i + 1] = position[i + 1];
-    this.vertexArray[i + 2] = position[i + 2];
+    this.vertexArray[i] = position[0];
+    this.vertexArray[i + 1] = position[1];
+    this.vertexArray[i + 2] = position[2];
 
     this.needBuffer = true;
   }
