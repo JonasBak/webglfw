@@ -1,0 +1,19 @@
+{
+  "name": "webglfw",
+  "collaborators": [
+    "jonasbak <jonasxb@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "camera.js",
+    "controller.js",
+    "gl-matrix.js",
+    "scene.js",
+    "shader.js",
+    "vertexarray.js",
+    "module.js"
+  ],
+  "module": "module.js",
+  "sideEffects": "false"
+}
+
