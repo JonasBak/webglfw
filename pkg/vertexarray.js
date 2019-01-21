@@ -159,7 +159,7 @@ export class VertexArray {
     this.addQuadrilateral(p011, p111, p110, p010, color);
   }
 
-  addSphere(radius, center = vec3.create(), cir = 100, hei = 50) {
+  addSphere(radius, center = vec3.create(), cir = 100, hei = 50, color = vec3.fromValues(1, 0.5, 0)) {
     //TODO: mer effektiv
     //TODO: legg til tilfelle hvor man er på toppen/bunner for å spare 2 * cir trekanter
     for (let h = 0; h < hei; h++) {
@@ -207,8 +207,6 @@ export class VertexArray {
           center[1] + y1,
           center[2] + z10
         );
-
-        const color = vec3.fromValues(h / hei, 0.5, 0.8);
 
         this.makeVertex(p0, color, vec3.sub(vec3.create(), p0, center));
         this.makeVertex(p1, color, vec3.sub(vec3.create(), p1, center));
